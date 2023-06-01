@@ -1,41 +1,68 @@
+import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // Application name
-      title: 'Flutter Hello World',
-      // Application theme data, you can set the colors for the application as
-      // you want
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (context) => MyAppState(),
+      child: MaterialApp(
+        title: 'TestApp',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        ),
+        home: MyHomePage(),
       ),
-      // A widget which will be started on application startup
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  final String title;
-  const MyHomePage({super.key, required this.title});  
+//MyAppState: state of the app
+//ChangeNotifier: notify widgets about changes in its state
+//
+class MyAppState extends ChangeNotifier {
+  var current = WordPair.random();
 
+  //add getNext method
+  void getNext() {
+    current = WordPair.random();
+    notifyListeners(); //let everyone knowwwwwwwoooooonnnnnnkkkkkk      eeeeeennnnnnooooooyyyyyyrrrrrreeeeeevvvvvveeeeee      tttttteeeeeellllll////////////
+  }
+}
+
+// very widget defines a build method that is called everytime the circumstances change
+class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //watches the appstate using context.watch
+    var appState = context.watch<MyAppState>();
+
+    //every build method must return a widget
+    //scaffold, column, text are both widgets
+    //
     return Scaffold(
-      appBar: AppBar(
-        // The title text which will be shown on the action bar
-        title: Text(title),
-      ),
-      body: Center(
-        child: Text(
-          'Hello, World!',
-        ),
+      body: Column(
+        children: [
+          Text('A random idea:'),
+          //accesses appstate's only member: current
+          Text(appState.current.asLowerCase),
+
+          //Button
+          ElevatedButton(
+            onPressed: () {
+              appState.getNext();
+            },
+            child: Text('Next'),
+          ),
+        ],
       ),
     );
   }
